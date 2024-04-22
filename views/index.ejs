@@ -1,0 +1,47 @@
+<%- include("layout/header") %>
+<div class="container">
+    <div class="row my-4">
+        <div class="col-lg-12">
+            <% if (message) { %>
+                <div class="alert alert-dismissible fade show alert-<%= message.type %>" role="alert">
+                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <strong> <%= message.message %></strong>
+                </div>
+            <% } %>
+            <div class="table-responsive">
+                <% if (typeof mangas !== 'undefined' && mangas.length > 0) { %>
+                    <table class="table table-striped text-center my-3 p-4">
+                        <thead>
+                            <tr class="table-dark text-center">
+                                <th class="text-center"> - </th>
+                                <th class="text-center">  </th>
+                                <th class="text-center">  </th>
+                                <th class="text-center">  </th>
+                                <th class="text-center">  </th>
+                                <th class="text-center"> - </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% mangas.forEach((row, index) =>{ %>
+                                <tr>
+                                    <td class="text-center"><%= index %></td>
+                                    <td class="text-center"><img src="/uploads/<%= row.coverImg %>" alt="<%= 'Cover image for ' + row.title %>" width="200" height="360"  class="img-thumbnail"/></td>
+                                    <td class="text-center"><%= row.title %></td>
+                                    <td class="text-center"><%= row.description %></td>
+                                    <th class="text-center"><%= row.chapters %></th>
+                                    <td class="text-center">
+                                        <a href="/edit/<%= row._id %>" class="text-success" aria-label="Edit <%= row.title %>"><i class="fas fa-edit fa-lg mx-1"></i></a>
+                                        <a href="/delete/<%= row._id %>" class="text-danger" aria-label="Delete <%= row.title %>"><i class="fas fa-trash fa-lg mx-1"></i></a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <h1 class="text-center text-secondary mt-5">No Mangas Found!</h1>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include("layout/footer") %>
