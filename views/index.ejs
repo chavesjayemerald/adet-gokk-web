@@ -55,7 +55,7 @@
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 if (input.value) {
-                    socket.emit('chat message', { text: input.value, user: 'Customer' });
+                    socket.emit('chat message', { text: input.value, user: 'Customer Service' });
                     input.value = '';
                 }
             });
