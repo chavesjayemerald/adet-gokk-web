@@ -4,34 +4,35 @@
         <div class="col-lg-12">
             <% if (message) { %>
                 <div class="alert alert-dismissible fade show alert-<%= message.type %>" role="alert">
-                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close alert"></button>
                     <strong> <%= message.message %></strong>
                 </div>
             <% } %>
             <div class="table-responsive">
                 <% if (typeof mangas !== 'undefined' && mangas.length > 0) { %>
-                    <table class="table table-striped text-center my-3 p-4">
+                    <table class="table table-striped text-center my-3 p-4" aria-describedby="manga-table-description">
+                        <caption id="manga-table-description">Table of Manga descriptions with cover images, titles, descriptions, and chapter counts.</caption>
                         <thead>
                             <tr class="table-dark text-center">
-                                <th class="text-center"> - </th>
-                                <th class="text-center">  </th>
-                                <th class="text-center">  </th>
-                                <th class="text-center">  </th>
-                                <th class="text-center">  </th>
-                                <th class="text-center"> - </th>
+                                <th scope="col">Index</th>
+                                <th scope="col">Cover</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Chapters</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <% mangas.forEach((row, index) =>{ %>
                                 <tr>
-                                    <td class="text-center"><%= index %></td>
-                                    <td class="text-center"><img src="/uploads/<%= row.coverImg %>" alt="<%= 'Cover image for ' + row.title %>" width="200" height="360"  class="img-thumbnail"/></td>
+                                    <td class="text-center"><%= index + 1 %></td>
+                                    <td class="text-center"><img src="/uploads/<%= row.coverImg %>" alt="<%= 'Cover image for ' + row.title %>" width="200" height="360" class="img-thumbnail"/></td>
                                     <td class="text-center"><%= row.title %></td>
                                     <td class="text-center"><%= row.description %></td>
                                     <th class="text-center"><%= row.chapters %></th>
                                     <td class="text-center">
-                                        <a href="/edit/<%= row._id %>" class="text-success" aria-label="Edit <%= row.title %>"><i class="fas fa-edit fa-lg mx-1"></i></a>
-                                        <a href="/delete/<%= row._id %>" class="text-danger" aria-label="Delete <%= row.title %>"><i class="fas fa-trash fa-lg mx-1"></i></a>
+                                        <a href="/edit/<%= row._id %>" class="text-success" aria-label="Edit <%= row.title %>" role="button"><i class="fas fa-edit fa-lg mx-1"></i></a>
+                                        <a href="/delete/<%= row._id %>" class="text-danger" aria-label="Delete <%= row.title %>" role="button"><i class="fas fa-trash fa-lg mx-1"></i></a>
                                     </td>
                                 </tr>
                             <% }) %>
@@ -43,5 +44,32 @@
             </div>
         </div>
     </div>
+    <ul id="messages" aria-live="polite"></ul>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        document.addEventListener("DOMContentLoaded", function() {
+            var form = document.getElementById('form');
+            var input = document.getElementById('input');
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                if (input.value) {
+                    socket.emit('chat message', { text: input.value, user: 'Customer' });
+                    input.value = '';
+                }
+            });
+
+            socket.on('chat message', function(data) {
+                var item = document.createElement('li');
+                item.textContent = data.user + ': ' + data.text;
+                document.getElementById('messages').appendChild(item);
+                window.scrollTo(0, document.body.scrollHeight);
+            });
+        });
+    </script>
+    <form id="form" action="">
+        <input id="input" autocomplete="off" aria-label="Type your message here" /><button type="submit">Send</button>
+    </form>
 </div>
 <%- include("layout/footer") %>
